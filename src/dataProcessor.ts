@@ -71,18 +71,6 @@ export function processSignResult(signResult: SignResult): ProcessedSignResult {
   }
 }
 
-interface SummaryStats {
-  total: number;
-  success: number;
-  alreadySigned: number;
-  failed: number;
-  errorMessages: Record<string, number>;
-  signResults?: {
-    success: SignResultItem[];
-    failed: SignResultItem[];
-  };
-}
-
 /**
  * 汇总签到结果
  * @param results - 所有贴吧的签到结果

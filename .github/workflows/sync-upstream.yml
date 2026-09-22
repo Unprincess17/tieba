@@ -17,7 +17,7 @@ jobs:
     
     steps:
       - name: 检出代码
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           # 使用默认的GITHUB_TOKEN，它对当前仓库有写权限
@@ -41,9 +41,9 @@ jobs:
           
       - name: 备份需要保留的文件
         run: |
-          if [ -f "last_activity.md" ]; then
+          if [ -f ".github/last_activity.md" ]; then
             echo "📦 备份本地的 last_activity.md 文件"
-            cp last_activity.md last_activity.md.backup
+            cp .github/last_activity.md .github/last_activity.md.backup
           fi
       
       - name: 合并上游变更
@@ -65,10 +65,10 @@ jobs:
           
       - name: 恢复需要保留的文件
         run: |
-          if [ -f "last_activity.md.backup" ]; then
+          if [ -f ".github/last_activity.md.backup" ]; then
             echo "📦 恢复本地的 last_activity.md 文件"
-            mv last_activity.md.backup last_activity.md
-            git add last_activity.md
+            mv .github/last_activity.md.backup .github/last_activity.md
+            git add .github/last_activity.md
             git commit -m "保留本地 last_activity.md 文件" || echo "没有需要提交的更改"
           fi
       

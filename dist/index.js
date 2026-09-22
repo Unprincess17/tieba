@@ -59,7 +59,7 @@ const notify_1 = require("./notify");
         // 获取TBS
         const tbs = yield (0, apiService_1.getTbs)(bduss);
         // 配置批量签到的大小和间隔
-        const batchSize = parseInt(process.env.BATCH_SIZE || '20', 10);
+        const batchSize = parseInt(process.env.BATCH_SIZE || '5', 10);
         const batchInterval = parseInt(process.env.BATCH_INTERVAL || '1000', 10);
         // 配置重试相关参数
         const maxRetries = parseInt(process.env.MAX_RETRIES || '3', 10); // 最大重试次数，默认3次
@@ -218,11 +218,9 @@ const notify_1 = require("./notify");
                         console.log(`🎉 所有贴吧签到成功，不需要继续重试`);
                         break;
                     }
-                    // 如果不是最后一次重试，并且还有失败的贴吧，则增加重试间隔
+                    // 如果不是最后一次重试，并且还有失败的贴吧，则短暂暂停
                     if (retryCount < maxRetries && failedTiebas.length > 0) {
-                        // 可以选择递增重试间隔
-                        const nextRetryInterval = retryInterval * (retryCount + 1) / retryCount;
-                        console.log(`⏳ 准备第${retryCount + 1}次重试，调整间隔为 ${nextRetryInterval / 1000} 秒...`);
+                        console.log(`⏳ 准备第${retryCount + 1}次重试...`);
                         yield new Promise(resolve => setTimeout(resolve, 1000)); // 短暂暂停以便于查看日志
                     }
                 }
