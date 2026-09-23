@@ -62,6 +62,18 @@ jobs:
             git merge upstream/$CURRENT_BRANCH -X theirs --no-edit
             echo "⚠️ 使用theirs合并策略完成，如有异常请手动检查"
           fi
+
+      - name: 保留本仓库工作流文件
+        run: |
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          git restore --source=origin/$CURRENT_BRANCH -- .github/workflows
+          if ! git diff --quiet -- .github/workflows; then
+            git add .github/workflows
+            git commit -m "保留Fork仓库工作流配置"
+            echo "✅ 已保留本仓库工作流配置，避免权限受限推送失败"
+          else
+            echo "ℹ️ 工作流文件无变化"
+          fi
           
       - name: 恢复需要保留的文件
         run: |
