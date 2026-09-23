@@ -264,73 +264,68 @@ function sendNotification(summary) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log('📱 开始发送通知...');
         const title = getNotifyTitle();
-        let anySuccess = false;
+        const tasks = [];
         // Server酱通知
         if (process.env.SERVERCHAN_KEY) {
-            const result = yield sendServerChan({
+            tasks.push(sendServerChan({
                 key: process.env.SERVERCHAN_KEY,
                 title: title,
                 content: summary
-            });
-            if (result.success)
-                anySuccess = true;
+            }));
         }
         // Bark通知
         if (process.env.BARK_KEY) {
-            const result = yield sendBark({
+            tasks.push(sendBark({
                 key: process.env.BARK_KEY,
                 title: title,
                 content: summary
-            });
-            if (result.success)
-                anySuccess = true;
+            }));
         }
         // Telegram通知
         if (process.env.TG_BOT_TOKEN && process.env.TG_CHAT_ID) {
-            const result = yield sendTelegram({
+            tasks.push(sendTelegram({
                 botToken: process.env.TG_BOT_TOKEN,
                 chatId: process.env.TG_CHAT_ID,
                 message: `${title}\n\n${summary}`
-            });
-            if (result.success)
-                anySuccess = true;
+            }));
         }
         // 钉钉通知
         if (process.env.DINGTALK_WEBHOOK) {
-            const result = yield sendDingTalk({
+            tasks.push(sendDingTalk({
                 webhook: process.env.DINGTALK_WEBHOOK,
                 secret: process.env.DINGTALK_SECRET,
                 title: title,
                 content: summary
-            });
-            if (result.success)
-                anySuccess = true;
+            }));
         }
         // 企业微信通知
         if (process.env.WECOM_KEY) {
-            const result = yield sendWecom({
+            tasks.push(sendWecom({
                 key: process.env.WECOM_KEY,
                 title: title,
                 content: summary
-            });
-            if (result.success)
-                anySuccess = true;
+            }));
         }
         // PushPlus通知
         if (process.env.PUSHPLUS_TOKEN) {
-            const result = yield sendPushPlus({
+            tasks.push(sendPushPlus({
                 token: process.env.PUSHPLUS_TOKEN,
                 title: title,
                 content: summary
-            });
-            if (result.success)
-                anySuccess = true;
+            }));
         }
+        if (tasks.length === 0) {
+            console.log('⚠️ 没有通知被发送，请检查通知配置');
+            return false;
+        }
+        // 并行发送所有已配置的通知
+        const results = yield Promise.all(tasks);
+        const anySuccess = results.some(result => result.success);
         if (anySuccess) {
             console.log('✅ 通知发送完成');
         }
         else {
-            console.log('⚠️ 没有通知被发送，请检查通知配置');
+            console.log('⚠️ 所有通知发送失败，请检查通知配置');
         }
         return anySuccess;
     });
