@@ -2,7 +2,7 @@ name: 百度贴吧自动签到
 
 on:
   schedule:
-    - cron: '0 2,3 * * *'  # 每天 UTC 2:00 3:00 运行 (北京时间 10:00 11:00)
+    - cron: '0 4,22 * * *'  # 每天 UTC 2:00 3:00 运行 (北京时间 10:00 11:00)
   workflow_dispatch:     # 支持手动触发
 
 jobs:
@@ -15,12 +15,12 @@ jobs:
 
     steps:
       - name: 检出代码
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         
       - name: 设置 Node.js 环境
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '20'
           
       - name: 安装依赖
         run: npm ci
